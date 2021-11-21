@@ -60,7 +60,6 @@ void t_command(char **s){
 
         }
     }
-
     fclose(inp); fclose(outp);   
 }
 
@@ -122,8 +121,6 @@ void current_time(FILE *fp){
     default:
         break;
     }
-
-    
     fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n", year, cmonth, day, hours, minutes, seconds);
 }
 void c_command(char **s){   
