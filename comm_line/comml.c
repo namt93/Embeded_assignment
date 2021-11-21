@@ -121,7 +121,8 @@ void current_time(FILE *fp){
     default:
         break;
     }
-    fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n", year, cmonth, day, hours, minutes, seconds);
+    fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n", 
+    year, cmonth, day, hours, minutes, seconds);
 }
 void c_command(char **s){   
     FILE *fp;
@@ -145,6 +146,18 @@ int main(int argc, char *argv[]){
         h_command();
     }
     
+    // error: missing arguments
+    else if(argc < 4){
+        printf("Error XX: missing arguments. Type “morse –h” for help");
+        return 1;
+    }
+
+    // error: more than 4 arguments
+    else if(argc > 4){
+        printf("Error XX: more than 4 arguments. Type “morse –h” for help");
+        return 1;
+    }
+
     // thuc hien lenh -t
     else if(!(strcmp(argv[3],"-t"))){
         t_command(argv);
