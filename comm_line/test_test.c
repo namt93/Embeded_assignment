@@ -28,7 +28,6 @@ int main(void) {
     else{
         printf("Time is: %02d:%02d:%02d pm\n", hours - 12, minutes, seconds); 
     }
-    
     printf("Date is: %02d/%02d/%d\n", day, month, year);
     return 0;
 }
