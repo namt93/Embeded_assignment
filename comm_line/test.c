@@ -60,7 +60,6 @@ void t_command(char **s){
 
         }
     }
-
     fclose(inp); fclose(outp);   
 }
 
