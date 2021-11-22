@@ -63,7 +63,7 @@ void t_command(char **s){
     fclose(inp); fclose(outp);   
 }
 
-// in ra ngay va gio hoan thanh
+// in ra date and time
 void current_time(FILE *fp){
     int hours, minutes, seconds, day, month, year;
     char cmonth[6];
@@ -128,13 +128,52 @@ void current_time(FILE *fp){
     fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n", year, cmonth, day, hours, minutes, seconds);
 }
 
+// void remove_extension(char s[]){
+//     char new_string[50] = "";
+//     int i, siz;
+//     siz = strlen(s);
+//     for(i = 0; i < siz; i++){
+//         if(s[i] == "."){
+//             strcat(new_string, &s[i]);
+//             break;
+//         }
+//         else{
+//             strcat(new_string, &s[i]);
+//         }
+//     }
+//     strcpy(s, new_string);
+//     // printf("%s \n", new_string);
+// }
+
+void rename_log(char **s){
+    char old_name[] = "data.log";
+
+    // remove_extension(s[1]);
+    // remove_extension(s[2]);
+    
+    
+    strcat(s[1], "_");
+    strcat(s[1], s[2]);
+    strcat(s[1], ".log");
+    rename(old_name, s[1]);
+}
 void c_command(char **s){
     FILE *fp;
-    fp = fopen ("data.log", "w");
+    char old_name[] = "data.log";
+    char new_name[50];
+    fp = fopen (old_name, "w");
+    int name;
 
+    // strcat(s[1], "_");
+    // strcat(s[1], s[2]);
+    // strcat(s[1], ".log");
     fprintf(fp, "Input file: %s\n", s[1]);
     fprintf(fp, "Output file: %s\n", s[2]);
     current_time(fp);
+
+    fclose(fp);
+
+    rename_log(s);
 }
 
 
@@ -164,25 +203,6 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-
-    // switch (argv[argc - 1])
-    // {
-    // case "-h":
-    //     h_command();
-    //     break;
-    // case "-t":
-    //     t_command(argv);
-    //     break;
-    // case "-m":
-    //     m_mis = 1;
-    //     break;
-    // case "-c":
-    //     c_command();
-    //     break;
-    // default:
-    //     printf("Something is wrong !!");
-    //     break;
-    // }
 
 
 
