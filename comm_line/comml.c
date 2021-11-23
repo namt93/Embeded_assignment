@@ -4,6 +4,9 @@
 #include <unistd.h>
 #include<time.h>
 
+int year, month, day, 
+hours, minutes, seconds;
+char new_inp[50], new_outp[50];
 void h_command(){
     FILE *fptr;
     char c;
@@ -63,20 +66,21 @@ void t_command(char **s){
     fclose(inp); fclose(outp);   
 }
 
+// print out date and time
 void current_time(FILE *fp){
-    int hours, minutes, seconds, day, month, year;
     char cmonth[6];
+
     time_t now;
 
     time(&now);
 
     struct tm *local = localtime(&now);
 
-    hours = local -> tm_hour;
-    minutes = local -> tm_min;
-    seconds = local -> tm_sec;
+    hours = local->tm_hour;
+    minutes = local->tm_min;
+    seconds = local->tm_sec;
 
-    day = local -> tm_mday;
+    day = local->tm_mday;
     month = local -> tm_mon + 1;
     year = local -> tm_year + 1900;
 
@@ -121,9 +125,68 @@ void current_time(FILE *fp){
     default:
         break;
     }
-    fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n", 
+
+    
+    fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n",
     year, cmonth, day, hours, minutes, seconds);
 }
+
+// remove file extension
+void rm_extension(char *s, char *s1){
+    int i, j = 0;
+    char duoi[2] = ".";
+    int siz = strlen(s);
+    int siz1 = strlen(s1);
+    for (int i = 0; i < siz; i++){
+        if(strstr(&s[i],duoi) == &s[i]){
+            break;
+        }
+        else{
+            new_inp[j++] = s[i];
+        }
+    }
+    new_inp[j] = '\0';
+    j = 0;
+    for (int i = 0; i < siz1; i++){
+        if(strstr(&s1[i],duoi) == &s1[i]){
+            break;
+        }
+        else{
+            new_outp[j++] = s1[i];
+        }
+    }
+}
+// rename log file
+void rename_log(char **s){
+    char old_name[] = "data.log";
+    char cyear[10], cmonth[10], cday[10], 
+    chours[10], cminutes[10], cseconds[10];
+
+    // chuyen int sang char
+    itoa(year, cyear, 10);
+    itoa(month, cmonth, 10);
+    itoa(day, cday, 10);
+    itoa(hours, chours, 10);
+    itoa(minutes, cminutes, 10);
+    itoa(seconds, cseconds, 10);
+
+    rm_extension(s[1], s[2]);
+
+    // ghep ten file log
+    strcat(new_inp, "_");
+    strcat(new_inp, new_outp);
+    strcat(new_inp, "_");
+    strcat(new_inp, cyear);
+    strcat(new_inp, cmonth);
+    strcat(new_inp, cday);
+    strcat(new_inp, "_");
+    strcat(new_inp, chours);
+    strcat(new_inp, cminutes);
+    strcat(new_inp, cseconds);
+    strcat(new_inp, ".log");
+    rename(old_name, new_inp);
+}
+
 void c_command(char **s){   
     FILE *fp;
     fp = fopen ("data.log", "w");
@@ -131,6 +194,10 @@ void c_command(char **s){
     fprintf(fp, "Input file: %s\n", s[1]);
     fprintf(fp, "Output file: %s\n", s[2]);
     current_time(fp);
+
+    fclose(fp);
+
+    rename_log(s);
 }
 
 int main(int argc, char *argv[]){
@@ -146,15 +213,13 @@ int main(int argc, char *argv[]){
         h_command();
     }
     
-    // error: missing arguments
     else if(argc < 4){
-        printf("Error XX: missing arguments. Type “morse –h” for help");
+        printf("Error XX: missing arguments. Type “morse –h” for help"); // error: missing arguments
         return 1;
     }
 
-    // error: more than 4 arguments
     else if(argc > 4){
-        printf("Error XX: more than 4 arguments. Type “morse –h” for help");
+        printf("Error XX: more than 4 arguments. Type “morse –h” for help"); // error: more than 4 arguments
         return 1;
     }
 
