@@ -7,7 +7,7 @@
 #include <time.h>
 #include <fstream>
 
-#include "translator.cpp"
+#include "error.cpp"
 
 void text_morseFILE(const char* inp, const char* outp){
     fstream myFile;
@@ -18,7 +18,9 @@ void text_morseFILE(const char* inp, const char* outp){
     if (myFile.is_open()) {
         while (getline(myFile , line)) {
             s += line + '\n';
+
         };
+        s.resize(s.length() - 1);
         s_res = letter_to_morse(s);
         myFile.close();
     };
@@ -41,6 +43,7 @@ void morse_textFILE(const char *inp, const char *outp){
         while (getline(myFile , line)) {
             s += line + '\n';
         };
+        s.resize(s.length() - 1);
         s_res = morse_to_letter(s);
         myFile.close();
     };
@@ -90,6 +93,7 @@ void t_command(char **s){
     outp = s[2];
     
     text_morseFILE(inp, outp);
+    err_text(inp);
 }
 
 void m_command(char **s){
@@ -99,6 +103,7 @@ void m_command(char **s){
     outp = s[2];
     
     morse_textFILE(inp, outp);
+    err_morse(inp);
 }
 
 // print out date and time
