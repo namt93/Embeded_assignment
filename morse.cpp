@@ -5,9 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#include<fstream>
 
-#define size_of_array 51
+
+#define size_of_array 52
 
 using namespace std;
 
@@ -17,7 +17,7 @@ string letter[size_of_array] = {"a", "b", "c", "d", "e", "é", "f", "g", "h", "i
                 "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",                       //10 - 4
                 ".", ",", ":", "?", "'",                                                //5  - 5
                 "-", "/", "(", ")", "\"",                                               //5  - 6
-                "=", "+", "×", "@"};                                                    //4  - 7
+                "=", "+", "×", "@", "\n"};                                                    //4  - 7
 
 string morse[size_of_array] = {".-", "-...", "-.-.", "-..", ".", "..-..", "..-.", "--.", "....", "..", ".---",              //11 - 1
                                 "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-",                        //10 - 2
@@ -25,7 +25,7 @@ string morse[size_of_array] = {".-", "-...", "-.-.", "-..", ".", "..-..", "..-."
                                 ".----", "..---", "...--", "....-", ".....","-....", "--...", "---..", "----.", "-----",    //10 - 4
                                 ".-.-.-", "--..--", "---...", "..--..", ".----.",                                           //5  - 5                         
                                 "-....-", "-..-.", "-.--.", "-.--.-", ".-..-.",                                             //5  - 6
-                                "-...-", ".-.-.", "-..-", ".--.-."};                                                        //4  - 7
+                                "-...-", ".-.-.", "-..-", ".--.-.","\n"};                                                        //4  - 7
 
 
 string letter_to_morse(string s) {      //Encrypting function
@@ -40,7 +40,7 @@ string letter_to_morse(string s) {      //Encrypting function
     //Encrypt letter to morse code
     for (int i = 0; i < s.length(); i++) {
         s_temp += s[i];
-        if (s[i] != ' ' ){
+        if (s[i] != ' '){
             for (int j = 0; j < size_of_array; j++) {     //Scan through the "letter" array
                 if (s_temp == letter[j])        //If the digit is valid, add the equivalent morse
                     s_res += morse[j] + ' ';    //code to the string, seperated by a blankspace
@@ -48,9 +48,7 @@ string letter_to_morse(string s) {      //Encrypting function
         } 
         else if (s[i] == ' ')   //Seperate each
             s_res += '/';       //word by a '/'
-        else if (s[i] == '\n'){
-            s_res += '\n';
-        }
+
         s_temp = "";      //Reset s_temp for new loop;
     };
     
@@ -68,7 +66,7 @@ string morse_to_letter(string s) {      //Decrypting function
 
     //Decrypt Morse code to letter
     for (int i = 0; i < s.length(); i++) {      //Store every '.' and '-'
-        if (s[i] == '.' || s[i] == '-') {       //character to s_temp for
+        if (s[i] == '.' || s[i] == '-' || s[i] == '\n') {       //character to s_temp for
             s_temp += s[i];                     //decryption.
             counter = 0;        //Reset counter.
         }
@@ -189,9 +187,6 @@ void morse_textFILE(FILE *fp,FILE *fp1){
     fclose(fp1);
 }
 
-/* A local variable detect error 
-in the command line */ 
-int error = 0;
 
 /* Local variables store date and time values 
 as a number */
@@ -202,13 +197,10 @@ hours, minutes, seconds;
 input and output file without extension */
 char new_inp[50], new_outp[50];
 
-clock_t t;
-double time_taken;
 /* Perform -h command */
 void h_command(){
     FILE *fptr;
     char c;
-
 
     /* Open readme file for reading */
     fptr = fopen("readme.txt", "r");
@@ -227,50 +219,35 @@ void h_command(){
 
 /* Perform -t command */
 void t_command(char **s){
-    
     FILE *inp, *outp;
 
-    t = clock();
     inp = fopen(s[1], "r");
+    outp = fopen(s[2], "w");
     
-    if (fopen(s[1], "r") == NULL){
-        printf("Error XX: %s could not be opened",s[1]);
-        error = 1;
-    }
-    else{
-        outp = fopen(s[2], "w");
-        test_morseFILE(inp, outp);
-    }
+    test_morseFILE(inp, outp);
 
-    fclose(inp); fclose(outp);  
-    t = clock() - t;
-    time_taken = ((double) t)/CLOCKS_PER_SEC;
-    printf("%f\n", time_taken);
+
+    fclose(inp); fclose(outp);   
 }
 
 void m_command(char **s){
     FILE *inp, *outp;
 
-    t = clock();
     inp = fopen(s[1], "r");
+    outp = fopen(s[2], "w");
     
-    if (fopen(s[1], "r") == NULL){
-        printf("Error XX: %s could not be opened",s[1]);
-        error = 1;
-    }
-    else{
-        outp = fopen(s[2], "w");
-        morse_textFILE(inp, outp);
-    }
+    morse_textFILE(inp, outp);
+
 
     fclose(inp); fclose(outp);
-    t = clock() - t;
-    time_taken = ((double)t) /CLOCKS_PER_SEC;
 }
 
 // print out date and time
-char cmonth[6];
 void current_time(FILE *fp){
+    /* the variable store month 
+    as a word */
+    char cmonth[6];
+
     /* time_t is arithmetic time type */
     time_t now;
 
@@ -410,32 +387,8 @@ void rename_log(char **s){
 
 /* Perform -c command */
 void c_command(char **s){   
-    FILE *fp, *finp;
-    int m_mis = 1, word_count = 0;
-    char c;
-
-
-    finp = fopen(s[1], "r");
-    c = fgetc(finp);
+    FILE *fp;
     
-    while (c != EOF)
-        {
-            if ( 'a'<=c && c <= 'z'){
-                m_mis = 0;
-                word_count ++;
-            }
-            c = fgetc(finp);
-        }
-    if(m_mis == 1){
-        m_command(s);
-    }
-    else{
-        t_command(s);
-    }
-    if(error == 1){
-        return;
-    }
-
     /* The initial log file of -c flag */
     fp = fopen ("data.log", "w");
 
@@ -445,9 +398,6 @@ void c_command(char **s){
     /* Print date and time to data.log file */
     current_time(fp);  
 
-    fprintf(fp, "Duration [seconds]: %f\n", time_taken);
-    fprintf(fp, "Word count in input file: %d", word_count);
-
     fclose(fp);
 
     /* Rename data.log file */
@@ -456,6 +406,7 @@ void c_command(char **s){
 
 /* Perform the command line
 or detect errors in the command line */
+int error = 0;
 void option_error(int n, char **s){
     int m_mis = 0;
     
@@ -515,7 +466,8 @@ void option_error(int n, char **s){
 
 int main(int argc, char *argv[]){
     // int i, t_mis = 0, m_mis = 0, c_mis = 0;
-    
+    clock_t t;
+    t = clock();
 
     /* Peform the command line or
     detect errors in the command line */
@@ -526,6 +478,10 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    return 0;
+    t = clock() - t;
+    double time_taken = ((double)t) /CLOCKS_PER_SEC;
 
+    printf("the program took %f seconds to execute \n", time_taken);
+
+    return 0;
 }
