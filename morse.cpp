@@ -229,26 +229,43 @@ void h_command(){
 void t_command(char **s){
     
     FILE *inp, *outp;
+    char ans;
+    int ansn = 1;
 
     t = clock();
     inp = fopen(s[1], "r");
-    
+
     if (fopen(s[1], "r") == NULL){
         printf("Error XX: %s could not be opened",s[1]);
         error = 1;
     }
     else{
-        outp = fopen(s[2], "w");
-        test_morseFILE(inp, outp);
+        if (fopen(s[2], "r") != NULL){
+            printf("Warning: %s already exists. Do you wish to overwrite (y, n)? ", s[2]);
+            ans = getchar();
+            ansn = 0;
+            if (ans == 'y'){
+                ansn = 1;
+            }
+            else{
+                error = 1;
+            }
+        }
+        if(ansn == 1){
+            outp = fopen(s[2], "w");
+            test_morseFILE(inp, outp);
+        }
     }
 
-    fclose(inp); fclose(outp);  
+    fclose(inp); fclose(outp);    
     t = clock() - t;
     time_taken = ((double) t)/CLOCKS_PER_SEC;
 }
 
 void m_command(char **s){
     FILE *inp, *outp;
+    char ans;
+    int ansn = 1;
 
     t = clock();
     inp = fopen(s[1], "r");
@@ -258,8 +275,21 @@ void m_command(char **s){
         error = 1;
     }
     else{
-        outp = fopen(s[2], "w");
-        morse_textFILE(inp, outp);
+        if (fopen(s[2], "r") != NULL){
+            printf("Warning: %s already exists. Do you wish to overwrite (y, n)? ", s[2]);
+            ans = getchar();
+            ansn = 0;
+            if (ans == 'y'){
+                ansn = 1;
+            }
+            else{
+                error = 1;
+            }
+        }
+        if(ansn == 1){
+            outp = fopen(s[2], "w");
+            morse_textFILE(inp, outp);
+        }
     }
 
     fclose(inp); fclose(outp);
@@ -410,7 +440,8 @@ void rename_log(char **s){
 /* Perform -c command */
 void c_command(char **s){   
     FILE *fp, *finp;
-    int m_mis = 1, word_count = 0;
+    int m_mis = 1, letter_count = 0, char_count = 0,
+    pre_space = 0, first_time = 0, word_count = 0;
     char c;
 
 
@@ -418,10 +449,24 @@ void c_command(char **s){
     c = fgetc(finp);
     
     while (c != EOF)
-        {
-            if ( 'a'<=c && c <= 'z'){
+        {   if (c != ' ' && c != '\n'){
+                char_count++;
+            }
+            
+            if ((pre_space == 1 || first_time == 0) 
+            && (('a'<=c && c <= 'z') || ('A' <= c && c <= 'Z'))){
+                word_count++;
+                first_time = 1;
+                pre_space = 0;
+            }
+            
+            if (c == ' ' || c == '\n'){
+                pre_space = 1;
+            }
+
+            if ( ('a'<=c && c <= 'z') || ('A' <= c && c <= 'Z') ){
                 m_mis = 0;
-                word_count ++;
+                letter_count ++;
             }
             c = fgetc(finp);
         }
@@ -445,10 +490,11 @@ void c_command(char **s){
     current_time(fp);  
 
     fprintf(fp, "Duration [seconds]: %f\n", time_taken);
-    fprintf(fp, "Word count in input file: %d", word_count);
+    fprintf(fp, "Word count in input file: %d\n", word_count);
+    fprintf(fp, "Total number of characters: %d\n", char_count);
 
     fclose(fp);
-
+    fclose(finp);
     /* Rename data.log file */
     rename_log(s);
 }
@@ -530,11 +576,6 @@ int main(int argc, char *argv[]){
     /* Peform the command line or
     detect errors in the command line */
     option_error(argc, argv);
-    
-    /* If error, the program exits */
-    if(error == 1){
-        return 1;
-    }
 
     return 0;
 
