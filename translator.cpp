@@ -23,8 +23,8 @@ string morse[size_of_array] = {".-", "-...", "-.-.", "-..", ".", "..-..", "..-."
 
 string letter_to_morse(string s) {      //Encrypting function
 
-    string s_res = "";      //resulted string
-    string s_temp = "";     //string used to compare
+    string s_res = "";      
+    string s_temp = "";     
 
     //Modify the input string to lowercase
     for (int i = 0; i < s.length(); i++) 
@@ -33,6 +33,7 @@ string letter_to_morse(string s) {      //Encrypting function
     //Encrypt letter to morse code
     for (int i = 0; i < s.length(); i++) {
         s_temp += s[i];
+
         if (s[i] != ' ' && s[i] != '\n'){
             for (int j = 0; j < size_of_array; j++) {     //Scan through the "letter" array
                 if (s_temp == letter[j])        //If the digit is valid, add the equivalent morse
@@ -42,6 +43,7 @@ string letter_to_morse(string s) {      //Encrypting function
 
         else if (s[i] == ' ')   //Seperate each
             s_res += "/ ";       //word by a '/'
+
         else if (s[i] == '\n') {
             s_res += '\n';
         }
@@ -52,7 +54,7 @@ string letter_to_morse(string s) {      //Encrypting function
 };
 
 string morse_to_letter(string s) {      //Decrypting function
-    // string s = ".- . .";
+
     string s_res = "";
     string s_temp = "";
     int counter = 0;        //Counter of blankspace ' '.
@@ -76,9 +78,7 @@ string morse_to_letter(string s) {      //Decrypting function
                 }
 
                 else if (s_temp == "")
-                {
                     j = size_of_array;      //Break the loop if s_temp is empty (to fix a bug).
-                }
 
                 else if (s_temp == morse[j]) {      //Correct decryption            
                     s_res += letter[j];             
@@ -91,6 +91,7 @@ string morse_to_letter(string s) {      //Decrypting function
                     s_temp = "";                        //decrypted as '*'
                 };
             };
+
             switch (s[i])
             {
                 case '\n': 
@@ -110,7 +111,7 @@ string morse_to_letter(string s) {      //Decrypting function
                     break;              //blankspace to detect errors.
                 }
             }
-        }
+        };
 
         if (counter == 2) {      //For any extra ' ', 
             s_res += '$';        //a '$' character
@@ -118,12 +119,11 @@ string morse_to_letter(string s) {      //Decrypting function
         };
     };
 
-    // s_res.resize(s_res.length() - 1);
     return s_res;
 }
 
-// int main(){         //Drive code
-//     string s1 = ".";
-//     string s_res1 = morse_to_letter(s1);
-//     cout<<s_res1;
+// int main() {
+//     string s = "..-..";
+//     cout<<morse_to_letter(s);
+
 // }

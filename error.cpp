@@ -1,3 +1,6 @@
+
+
+
 #include <fstream>
 #include <string>
 #include "translator.cpp"
@@ -57,7 +60,6 @@ int err_morse(const char *inp) {
     myFile.open(inp, ios::in);
     if (myFile.is_open()) {
         while (getline(myFile, line)) {
-
             line_counter++;
             
             for (int i = 0; i < line.length(); i++) {
@@ -110,16 +112,10 @@ int err_morse(const char *inp) {
                     };
                 };
             };
+
             s_temp = "";
         };
+
         myFile.close();
     };
 };
-
-// int main(){
-
-//     const char* inp = "input.txt";
-
-//     err_textF(inp);
-//     cout<<"Char counter: "<<trChar<<"\nError counter: "<<errChar; 
-// }
