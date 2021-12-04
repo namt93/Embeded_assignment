@@ -9,58 +9,6 @@
 
 #include "error.cpp"
 
-void text_morseFILE(const char* inp, const char* outp){
-    fstream myFile;
-    myFile.open(inp, ios::in);
-    string line;
-    string s = "";
-    string s_res;
-
-    if (myFile.is_open()) {
-        while (getline(myFile , line))
-            s += line + '\n';       //Add '\n' to every lines.
-
-        s.resize(s.length() - 1);   //Delete the last '\n'.
-        s_res = letter_to_morse(s);     //Start encryption.
-
-        myFile.close();
-    };
-
-    myFile.open(outp, ios::out);
-    if (myFile.is_open()) {
-        myFile<< s_res;     //Print encrypted data to the output file.
-
-        myFile.close();
-    };
- };
-
-void morse_textFILE(const char *inp, const char *outp){
-    fstream myFile;
-    myFile.open(inp, ios::in);
-    string line;
-    string s = "";
-    string s_res;
-
-    if (myFile.is_open()) {
-        while (getline(myFile , line)) {
-            s += line + '\n';       //Add '\n' for every lines.
-        };
-
-        s.resize(s.length() - 1);       //Delete the last '\n'.
-        s_res = morse_to_letter(s);     //Start decryption.
-
-        myFile.close();
-    };
-
-    myFile.open(outp, ios::out);
-    if (myFile.is_open()) {
-        myFile<< s_res;     //Print decrypted data to the output file.
-
-        myFile.close();
-    }
- }
-
-
 /* Local variables store date and time values 
 as a number */
 int year, month, day, 
@@ -76,6 +24,62 @@ char new_inp[50], new_outp[50];
 
 clock_t t;
 double time_taken;
+
+/* Convert text to morse file */
+void text_morseFILE(const char* inp, const char* outp){
+    fstream myFile;
+    myFile.open(inp, ios::in);
+    string line;
+    string s = "";
+    string s_res;
+
+    if (myFile.is_open()) {
+        while (getline(myFile , line))
+            s += line + '\n';         /* Add '\n' to every lines */
+
+        s.resize(s.length() - 1);     /* Delete the last '\n' */
+        s_res = letter_to_morse(s);   /* Start encryption. */
+
+        myFile.close();
+    };
+
+    myFile.open(outp, ios::out);
+    if (myFile.is_open()) {
+
+        /* Print encrypted data to the output file. */
+        myFile<< s_res;     
+
+        myFile.close();
+    };
+ };
+
+/* Convert morse to text file */
+void morse_textFILE(const char *inp, const char *outp){
+    fstream myFile;
+    myFile.open(inp, ios::in);
+    string line;
+    string s = "";
+    string s_res;
+
+    if (myFile.is_open()) {
+        while (getline(myFile , line)) 
+            s += line + '\n';         /* Add '\n' for every lines. */
+
+        s.resize(s.length() - 1);     /* Delete the last '\n'. */
+        s_res = morse_to_letter(s);   /* Start decryption. */
+
+        myFile.close();
+    };
+
+    myFile.open(outp, ios::out);
+    if (myFile.is_open()) {
+        /* Print decrypted data to the output file. */
+        myFile<< s_res;    
+
+        myFile.close();
+    }
+ }
+
 /* Perform -h command */
 void h_command() {
     FILE *fptr;
@@ -95,45 +99,44 @@ void h_command() {
 };
 
 /* Perform -t command */
-void t_command(char **s){
+void t_command(char **s, int n){
     const char *inp, *outp;
-    FILE *fp;
     char ans;
     int ansn = 1;
-    fp = fopen(s[1], "r");
+    
+    /* t stores time before the conversion */
     t = clock();
  
     inp = s[1];
     outp = s[2];
 
+    /* Check if input file exists or not */
     if (fopen(s[1],"r") == NULL) {
-        printf("Error XX: %s could not be opened\n", s[1]);
+        printf("Error XX: %s could not be opened.\n", s[1]);
         error = 1;
     }
 
     else {
+        /* Check if output file exists or not */
         if (fopen(s[2], "r") != NULL) {
-            printf("Warning: %s already exists.",
+            printf("Warning: %s already exists."
             " Do you wish to overwrite (y, n)? ", s[2]);
             ans = getchar();
             ansn = 0;
-            if (ans == 'y') {
+            if (ans == 'y') 
                 ansn = 1;
-            }
-
-            else {
+            else 
                 error = 1;
-            };
         }
 
+        /* Convert text file to morse file */
         if (ansn == 1) {
             text_morseFILE(inp, outp);
-            err_textF(inp);
-        };
-    };
+            err_textF(inp, n);
+        }
+    }
 
-    fclose(fp);
-
+    /* time_taken stores the duration value */
     t = clock() - t;
     time_taken = ((double) t)/CLOCKS_PER_SEC;
 };
@@ -141,23 +144,26 @@ void t_command(char **s){
 /* Perform -m command */
 void m_command(char **s){
     const char *inp, *outp;
-    // FILE *fp;
+    
     char ans;
     int ansn = 1;
-    // fp = fopen(s[1], "r");
+
+    /* t stores time before the conversion */
     t = clock();
  
     inp = s[1];
     outp = s[2];
 
+    /* Check if input file exists or not */
     if (fopen(s[1],"r") == NULL) {
-        printf("Error XX: %s could not be opened\n", s[1]);
+        printf("Error XX: %s could not be opened.\n", s[1]);
         error = 1;
     }
 
     else {
+        /* Check if output file exists or not */
         if (fopen(s[2], "r") != NULL) {
-            printf("Warning: %s already exists.",
+            printf("Warning: %s already exists."
             " Do you wish to overwrite (y, n)? ", s[2]);
             ans = getchar();
             ansn = 0;
@@ -167,14 +173,14 @@ void m_command(char **s){
                 error = 1;
         }
 
+        /* Convert Morse file to text file */
         if (ansn == 1) {
             morse_textFILE(inp, outp);
             err_morse(inp);
         }
     }
 
-    // fclose(fp);
-    
+    /* time_taken stores the duration value */
     t = clock() - t;
     time_taken = ((double) t)/CLOCKS_PER_SEC;
 }
@@ -319,6 +325,7 @@ void rename_log(char **s){
     rename(old_name, new_inp);
 }
 
+int c_print = 0;
 /* Perform -c command */
 void c_command(char **s) { 
     /* fp is a pointer of the log file */
@@ -331,7 +338,7 @@ void c_command(char **s) {
     
     /* Counter for character and word */
     int char_count = 0, word_count = 0;
-    char c;
+    char c, c1;
 
     finp = fopen(s[1], "r");
     c = fgetc(finp);
@@ -370,7 +377,7 @@ void c_command(char **s) {
     
     /* Perform t_command */
     else {
-        t_command(s);
+        t_command(s, c_print);
 
         finp = fopen(s[1], "r");
         c = fgetc(finp);
@@ -384,7 +391,7 @@ void c_command(char **s) {
                 string temp = "";
                 temp += c;
                 if (pre_space == 1 && temp == letter[i]) {
-                    word_count++;
+                    // word_count++;
                     pre_space = 0;
                 }
 
@@ -399,6 +406,9 @@ void c_command(char **s) {
     if (error == 1) 
         return;
 
+    fclose(finp);
+
+    finp = fopen("data1.log", "r");
     /* The initial log file of -c flag */
     fp = fopen ("data.log", "w");
 
@@ -419,6 +429,13 @@ void c_command(char **s) {
         fprintf(fp, "Total number of characters: %d\n", char_count);
         fprintf(fp, "Number of characters have been converted: %d\n", char_count - errChar);
         fprintf(fp, "Number of characters are NOT converted: %d\n", errChar);
+
+        c1 = fgetc(finp);
+        while (c1 != EOF){
+            fprintf(fp, "%c", c1);
+            c1 = fgetc(finp);
+        }
+
     }
 
     else {
@@ -431,8 +448,8 @@ void c_command(char **s) {
         fprintf(fp, "Number of characters are NOT converted: %d\n", errMorse);
     }
 
-    fclose(fp);
     fclose(finp);
+    fclose(fp);
     
     /* Rename data.log file */
     rename_log(s);
@@ -441,26 +458,35 @@ void c_command(char **s) {
 /* Perform the command line
 or detect errors in the command line */
 void option_error(int n, char **s){
-    int i = 0, t_exist = 0, same_com = 0;
+    int i = 0, t_exist = 0, same_com = 0, m_exist = 0, c_exist = 0;
 
     /* Check "-t" and "-m" are 
     in the same command or not */
-    for (i = 0; i < n; i++){
-            if(!strcmp(s[i], "-t")){
+    for (i = 0; i < n; i++) {
+            if (!strcmp(s[i], "-t")) 
                 t_exist = 1;
-            }
-        }
-        for (i = 0; i < n; i++){
-            if(!strcmp(s[i], "-m") && t_exist == 1){
-                same_com = 1;
+            if (!strcmp(s[i], "-c")) {
+                c_exist = 1;
                 break;
             }
         }
+    for (i = 0; i < n; i++) {
+        if (!strcmp(s[i], "-m")) {
+            if (t_exist == 1) {
+                same_com = 1;
+                break;
+            }
+            else{
+                m_exist = 1;
+                break;
+            }
+        }
+    }
     
     /* Error: Unrecognized command. */
     if (n == 1){
-        printf("Error 02: Unrecognized command.",
-        " Type “morse –h” for help \n");
+        printf("Error 02: Unrecognized command."
+        " Type “morse –h” for help. \n");
         return;
     }
 
@@ -469,7 +495,7 @@ void option_error(int n, char **s){
         h_command();
     
     else if(n > 2 && !(strcmp(s[n - 1], "-h")))
-        printf("Type “./main –h” for help");
+        printf("Type “./main –h” for help.");
     
 
     else if (n == 3 && (strcmp(s[n - 1], "-c")
@@ -480,38 +506,63 @@ void option_error(int n, char **s){
 
     /* Error: missing arguments */
     else if(n < 4 && (!strcmp(s[n - 1], "-t"))){
-        printf("Error 05: Missing arguments.",
-        " Type “./main –h” for help \n");
-        printf("Correct syntax: “./main <inputfile> <outpufile> -t”");
-        
+        printf("Error 05: Missing arguments."
+        " Type “./main –h” for help. \n");
+        printf("    | Correct syntax: “./main <inputfile> <outpufile> -t” \n");
+        printf("    |");
     }
     else if (n < 4 && (!strcmp(s[n - 1], "-m"))){
-        printf("Error 05: Missing arguments.",
-        " Type “./main –h” for help \n");
-        printf("Correct syntax: “./main <inputfile> <outpufile> -m”");
+        printf("Error 05: Missing arguments."
+        " Type “./main –h” for help. \n");
+        printf("    | Correct syntax: “./main <inputfile> <outpufile> -m” \n");
+        printf("    |");
     }
     else if (n < 4 && (!strcmp(s[n - 1], "-c"))){
-        printf("Error 05: Missing arguments.",
-        " Type “./main –h” for help \n");
-        printf("Correct syntax: “./main <inputfile> <outpufile> -c”");
+        printf("Error 05: Missing arguments."
+        " Type “./main –h” for help. \n");
+        printf("    | Correct syntax: “./main <inputfile> <outpufile> -c” \n");
+        printf("    |");
     }
 
 
     /* Error 03: more than 4 arguments */
     else if(n > 4){
-        printf("Error 03: Too many arguments.",
-        " Type “./main –h” for help"); 
+        printf("Error 03: Too many arguments."
+        " Type “./main –h” for help."); 
         return;
     }
 
     /* Error 04: "-t" and "-m" are in the same command */
     else if(same_com == 1)
-        printf("Error 04: “-t”, “-m” in the same command.",
-        " Type “./main –h” for help \n");
+        printf("Error 04: “-t”, “-m” in the same command."
+        " Type “./main –h” for help. \n");
+
+    /* Error 06: Incorrect order */
+    else if (n == 4 
+    &&((t_exist == 1 && (strcmp(s[3],"-t"))))) {
+        printf("Error 06: Incorrect order."
+        " Type “./main –h” for help. \n");
+        printf("    | Correct syntax: “./main <inputfile> <outpufile> -t” \n");
+        printf("    |");
+    }
+    else if (n == 4 
+    &&((m_exist == 1 && (strcmp(s[3],"-m"))))) {
+        printf("Error 06: Incorrect order."
+        " Type “./main –h” for help. \n");
+        printf("    | Correct syntax: “./main <inputfile> <outpufile> -m” \n");
+        printf("    |");
+    }
+    else if (n == 4 
+    &&((c_exist == 1 && (strcmp(s[3],"-c"))))) {
+        printf("Error 06: Incorrect order."
+        " Type “./main –h” for help. \n");
+        printf("    | Correct syntax: “./main <inputfile> <outpufile> -c” \n");
+        printf("    |");
+    }
 
     /* perform -t flag */
     else if(!(strcmp(s[3],"-t")))
-        t_command(s);
+        t_command(s, c_print);
     
 
     /* perform -m flag */
@@ -529,13 +580,13 @@ void option_error(int n, char **s){
     && ((strcmp(s[3],"-t"))
     ||(strcmp(s[3],"-m"))
     ||(strcmp(s[3],"-c")))){
-        printf("Error 01: Unknown command.",
-        " Type “./main –h” for help");
+        printf("Error 01: Unknown command."
+        " Type “./main –h” for help.");
         return;
     }
 
     else{
-        printf("Type “./main –h” for help\n");
+        printf("Type “./main –h” for help.");
         return;
     }
 }
