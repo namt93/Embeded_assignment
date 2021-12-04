@@ -1,6 +1,3 @@
-
-
-
 #include <fstream>
 #include <string>
 #include "translator.cpp"
@@ -36,13 +33,13 @@ int err_textF(const char *inp) {
                             errChar++;      
                             err_bool = 1;
                         };
-                    };
-
-                    if (err_bool == 1) {
-                        errWord++;          //Check the error
-                        err_bool = 0;       //of each words.
-                    }
+                    };  
+                }
+                else if ((line[i] == ' ' || line[i] == '\n') && err_bool == 1) {
+                    errWord++;          //Check the error
+                    err_bool = 0;       //of each words.
                 };
+
                 s = "";
             };
         };
@@ -106,7 +103,7 @@ int err_morse(const char *inp) {
                         };
                     };
 
-                    if (err_bool == 1) {
+                    if ((line[i] == '/' || line[i] == '\n') && err_bool == 1) {
                         errWord++;          //Check for error words.
                         err_bool = 0;
                     };
