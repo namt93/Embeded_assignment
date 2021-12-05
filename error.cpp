@@ -1,3 +1,5 @@
+/* This file includes functions used to print out and count numbers of errors */
+
 #include <fstream>
 #include <string>
 #include "translator.cpp"
