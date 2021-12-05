@@ -187,7 +187,7 @@ void m_command(char **s){
 
 // print out date and time
 char cmonth[6];
-void current_time(FILE *fp){
+void current_time(){
     /* time_t is arithmetic time type */
     time_t now;
 
@@ -251,8 +251,8 @@ void current_time(FILE *fp){
     }
 
     /* Print out date and time */
-    fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n",
-    year, cmonth, day, hours, minutes, seconds);
+    // fprintf(fp ,"Time complete is: %d-%s-%02d  %02d:%02d:%02d \n",
+    // year, cmonth, day, hours, minutes, seconds);
 }
 
 /* Remove file extension of
@@ -338,7 +338,7 @@ void c_command(char **s) {
     
     /* Counter for character and word */
     int char_count = 0, word_count = 0;
-    char c, c1;
+    char c;
 
     finp = fopen(s[1], "r");
     c = fgetc(finp);
@@ -391,7 +391,7 @@ void c_command(char **s) {
                 string temp = "";
                 temp += c;
                 if (pre_space == 1 && temp == letter[i]) {
-                    // word_count++;
+                    word_count++;
                     pre_space = 0;
                 }
 
@@ -408,49 +408,67 @@ void c_command(char **s) {
 
     fclose(finp);
 
-    finp = fopen("data1.log", "r");
-    /* The initial log file of -c flag */
-    fp = fopen ("data.log", "w");
+    int i = 0;
+    int j = 0, t = 0;
+    string s_temp = "";
 
-    fprintf(fp, "Input file: %s\n", s[1]);  /* Get the input file name */
-    fprintf(fp, "Output file: %s\n", s[2]); /* Get the output file name */
+    fstream myFile;
     
-    /* Print date and time to data.log file */
-    current_time(fp);  
+    /* The initial log file of -c flag */
+    myFile.open("data.log", ios::out);
 
-    /* Print statistics */
-    fprintf(fp, "Duration [seconds]: %f\n", time_taken);
+    if (myFile.is_open()) {
+        myFile<<"Input file: "<<s[1]<<"\n";     /* Print the input file name */
+        myFile<<"Output file: "<<s[2]<<"\n";    /* Print the output file name */
 
-    if (m_mis == 0) {
-        fprintf(fp, "Word count in input file: %d\n", word_count);
-        fprintf(fp, "Word converted: %d\n", word_count - errWord);
-        fprintf(fp, "Word with errors: %d\n", errWord);
-        
-        fprintf(fp, "Total number of characters: %d\n", char_count);
-        fprintf(fp, "Number of characters have been converted: %d\n", char_count - errChar);
-        fprintf(fp, "Number of characters are NOT converted: %d\n", errChar);
+        /* Print date and time to data.log file */
+        current_time();
+        myFile<<"Time complete is: "<<year<<"-"<<cmonth<<"-"<<day<<" "<<hours<<":"<<minutes<<":"<<seconds<<"\n";
 
-        c1 = fgetc(finp);
-        while (c1 != EOF){
-            fprintf(fp, "%c", c1);
-            c1 = fgetc(finp);
+
+        /* Print statistics */
+        myFile<<"Duration [seconds]: "<<time_taken<<"\n";
+
+        if (m_mis == 0) {
+            myFile<<"Word count in input file: "<<word_count<<"\n";
+            myFile<<"Word converted: "<<word_count - errWord<<"\n";
+            myFile<<"Word with errors: "<<errWord<<"\n";
+            myFile<<"Total number of characters: "<<char_count<<"\n";
+            myFile<<"Number of characters have been converted: "<<char_count - errChar<<"\n";
+            myFile<<"Number of characters are NOT converted: "<< errChar<<"\n";
+
+            int i = 0;
+            while (i < numl){
+                myFile<<"Error T1: Unrecognize character "<<line1[i]<<" on line "<<line_num[i]<<"\n";
+                i++;
+            }
+
         }
 
+        else {
+            myFile<<"Word count in input file: "<<word_count<<"\n";
+            myFile<<"Word converted: "<<word_count - errWord<<"\n";
+            myFile<<"Word with errors: "<<errWord<<"\n";
+            myFile<<"Total number of characters: "<<char_count<<"\n";
+            myFile<<"Number of characters have been converted: "<<char_count - errMorse<<"\n";
+            myFile<<"Number of characters are NOT converted: "<< errMorse<<"\n";
+
+            while (i < numl){
+                for (j = t; j < w_length[i] + t; j++)
+                    s_temp += line1[j];
+                if (s_temp.length() > 7)
+                    myFile << "Error M2: Invalid Morse code " << s_temp << " on line " << line_num[i] << "\n";
+                else
+                    myFile << "Error M3: Invalid Morse code " << s_temp << " on line " << line_num[i] << "\n";
+                s_temp = "";
+                t = w_length[i];
+                i++;
+            }
+        }
+        myFile.close();
     }
 
-    else {
-        fprintf(fp, "Word count in output file: %d\n", word_count);
-        fprintf(fp, "Word converted: %d\n", word_count - errWord);
-        fprintf(fp, "Word with errors: %d\n", errWord);
 
-        fprintf(fp, "Total number of characters: %d\n", char_count);
-        fprintf(fp, "Number of characters have been converted: %d\n", char_count - errMorse);
-        fprintf(fp, "Number of characters are NOT converted: %d\n", errMorse);
-    }
-
-    fclose(finp);
-    fclose(fp);
-    
     /* Rename data.log file */
     rename_log(s);
 }
