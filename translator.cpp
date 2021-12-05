@@ -1,3 +1,5 @@
+/* This file includes functions used to convert text to Morse and vice versa */
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
