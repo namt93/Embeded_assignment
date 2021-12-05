@@ -16,6 +16,7 @@ int err_textF(const char *inp) {
     myFile.open(inp, ios::in);
     if (myFile.is_open()) {
         while (getline(myFile, line)) {
+            line += '\n';
             line_counter ++;        //Count the number of lines in the input file.
 
             for (int i = 0; i < line.length(); i++) {
