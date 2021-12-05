@@ -22,7 +22,7 @@ string morse[size_of_array] = {".-", "-...", "-.-.", "-..", ".", "..-..", "..-."
                                 "-...-", ".-.-.", "-..-", ".--.-."};                                                        //4  - 7
 
 string letter_to_morse(string s) {      //Encrypting function
-
+    // string s = "ahoy";
     string s_res = "";      
     string s_temp = "";     
 
@@ -36,8 +36,12 @@ string letter_to_morse(string s) {      //Encrypting function
 
         if (s[i] != ' ' && s[i] != '\n'){
             for (int j = 0; j < size_of_array; j++) {     //Scan through the "letter" array
-                if (s_temp == letter[j])        //If the digit is valid, add the equivalent morse
+                if (s_temp == letter[j]) {        //If the digit is valid, add the equivalent morse
                     s_res += morse[j] + ' ';    //code to the string, seperated by a blankspace
+                    j = size_of_array;
+                }
+                else if (j == (size_of_array - 1))
+                    s_res += "# ";
             };
         } 
 
@@ -123,7 +127,8 @@ string morse_to_letter(string s) {      //Decrypting function
 }
 
 // int main() {
-//     string s = "..-..";
-//     cout<<morse_to_letter(s);
-
+//     string s = "hello";
+//     string s_res;
+//     s_res = letter_to_morse(s);
+//     cout<<s_res;
 // }
