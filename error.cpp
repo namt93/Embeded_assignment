@@ -126,6 +126,8 @@ void err_morse(const char *inp) {
             };
             s_temp = "";
         };
+
+        /* Print out the Error M1 to the screen. */
         for (int i = 0; i < line_counter + 1; i++){
                 if (extBlank[i] > 0)
                     cout<<"Error M1: "<< extBlank[i] <<" extra blankspaces on line "<<i<<".\n"; 
